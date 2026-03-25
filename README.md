@@ -21,7 +21,7 @@ Fornecer uma estrutura consistente e reutilizável para criação de novos apps 
 
 ```
 lib/
- ├── app/                      # Composição: router, shell, bindings, platform channels
+ ├── app/                      # Composição: router, shell
  ├── core/                     # Implementações de infraestrutura global
  ├── shared/                   # Contratos, abstrações e modelos compartilhados
  ├── commons/                  # Componentes visuais e utilitários reutilizáveis
@@ -39,8 +39,6 @@ Camada de composição — único lugar que conhece features, core e commons sim
 ```
 app/
  ├── router/                   # GoRouter com redirect auth guard
- ├── providers/                # Providers de shell: router, tema, lifecycle
- ├── channels/                 # Platform channels (ex: AndroidBackChannel)
  └── ui/                       # Shell: tab bar, wrappers estruturais
 ```
 
@@ -89,7 +87,6 @@ commons/
  ├── strings/
  ├── typography/
  └── widgets/
-     ├── shell/               # Tab bar, wrappers estruturais
      └── *.dart               # Componentes genéricos reutilizáveis
 ```
 
@@ -105,14 +102,7 @@ final httpClientProvider = Provider<HttpClientService>((ref) {
   return DioHttpClientService();
 });
 
-// core/session/session_providers.dart
-final sessionManagerProvider = Provider<SessionManager>((ref) {
-  return SessionManagerImpl(
-    ref.read(tokenStorageProvider),
-    ref.read(httpClientProvider),
-    ref.read(appRouterProvider),
-  );
-});
+
 ```
 
 Features consomem providers de core diretamente via `ref`:
@@ -132,12 +122,8 @@ O fluxo segue uma única direção:
 
 ```
 core providers → feature providers → notifiers → UI
-                        ↑
-              app providers (router, shell)
+
 ```
-
-`app/providers/` contém apenas providers do shell — router, lifecycle, tema. Não centraliza providers de core ou feature.
-
 ---
 
 ## Camadas por feature
